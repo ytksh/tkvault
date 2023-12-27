@@ -10,7 +10,7 @@ app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
-
+app.set('trust proxy', 1);
 const upload = multer({ dest: 'uploads/' });
 
 // Rate limiter
