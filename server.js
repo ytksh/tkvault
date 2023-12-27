@@ -73,7 +73,8 @@ app.post('/upload', upload.single('file'), (req, res) => {
   uploadData.push({
     fileName: req.file.filename,
     uploaderIP: censorIp(ip),
-    uploadTime: uploadTime
+    uploadTime: uploadTime,
+    fileSize: req.file.size // Add this line
   });
 
   // Write updated upload data back to file

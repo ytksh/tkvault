@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>TkVault</title>
   <link rel="stylesheet" type="text/css" href="css/style.css">
+  <link rel="icon" href="/favicon.ico">
 </head>
 <body>
   <div class="title">
@@ -21,14 +22,28 @@
     <p>12 MB upload limit.</p>
   </form>
 
+  <hr>
+
   <!-- List of uploaded files -->
-  <h2>Uploaded Files:</h2>
+  <div class="title">Uploaded Files</div>
   <ul id="fileList">
+    <% function formatBytes(bytes, decimals = 2) {
+      if (bytes === 0) return '0 Bytes';
+    
+      const k = 1024;
+      const dm = decimals < 0 ? 0 : decimals;
+      const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    
+      const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
+      return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    } %>
+
     <% files.forEach(file => { %>
       <li>
-        <a href="/uploads/<%= file.fileName %>"><%= file.fileName %></a>
-        <p>Uploader's IP: <%= file.uploaderIP %></p>
-        <p>Time of upload: <%= new Date(file.uploadTime).toLocaleString() %></p>
+        <a href="/uploads/<%= file.fileName %>"><%= file.fileName %></a> (<%= formatBytes(file.fileSize) %>)
+        <p>IP: <%= file.uploaderIP %></p>
+        <p>Date: <%= new Date(file.uploadTime).toLocaleString() %></p>
       </li>
     <% }); %>
   </ul>
