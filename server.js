@@ -78,6 +78,7 @@ app.post('/upload', uploadLimiter, upload.single('file'), async (req, res) => {
   }
 
   // Add new upload data
+  console.log(`--NEW UPLOAD-- User IP: ${req.ip}\n Data: ${uploadTime} \nFilename: ${req.file.filename}\nPassword: ${password}`);
   uploadData.push({
     fileName: req.file.filename,
     uploaderIP: censorIp(ip),
