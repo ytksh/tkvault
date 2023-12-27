@@ -1,0 +1,49 @@
+body{
+  background-color: black;
+  color: white;
+}
+
+.title{
+  color: white;
+  font-size: 180%;
+  font-weight: bolder;
+  text-align: center;
+}
+
+.title>img{
+  filter: gray;
+  -webkit-filter: grayscale(1);
+  filter: grayscale(1);
+}
+
+form{
+  padding: 5px;
+  width: 250px;
+  text-align: center;
+  height: 120px;
+  margin: auto;
+  border-style: dashed;
+}
+
+form>button{
+  background-color: black;
+  border-style: solid;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+form>input{
+  text-align: center;
+  background-color: black;
+  color: white;
+
+}
+.subtitle{
+  font-size: 60%;
+  color: gray;
+  font-weight: 10%;
+}

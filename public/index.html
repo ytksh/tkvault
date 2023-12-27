@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>tkvault</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+</head>
+<body>
+  <div class="title">
+    TkVault
+    <div class="subtitle">
+      File Upload System
+    </div>
+    <div class="title">
+      <img src="https://media.tenor.com/7GzWtl6kvcgAAAAi/bocchi-the-rock.gif">
+    </div>
+  </div>
+  <form action="/upload" method="post" enctype="multipart/form-data">
+    <input type="file" name="file" required>
+    <button type="submit">Upload</button>
+    <p>12 MB upload limit.</p>
+  </form>
+
+  <!-- List of uploaded files -->
+  <h2>Uploaded Files:</h2>
+  <ul id="fileList"></ul>
+
+  <script>
+    // Fetch the list of files from the server
+    fetch('/getFiles')
+      .then(response => response.json())
+      .then(data => {
+        const fileList = document.getElementById('fileList');
+        data.files.forEach(file => {
+          const listItem = document.createElement('li');
+          const link = document.createElement('a');
+          link.href = '/uploads/' + file;
+          link.innerText = file;
+          listItem.appendChild(link);
+          fileList.appendChild(listItem);
+        });
+      })
+      .catch(error => console.error('Error fetching file list:', error));
+  </script>
+</body>
+</html>
