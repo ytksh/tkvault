@@ -57,48 +57,48 @@
       </li>
     <% }); %>
   </ul>
-</body>
 
-<script>
-  function deleteFile(fileName) {
-    const password = prompt('Enter the password for this file:');
-    if (password) {
-      fetch(`/delete/${fileName}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ password: password })
+  <script>
+    function deleteFile(fileName) {
+      const password = prompt('Enter the password for this file:');
+      if (password) {
+        fetch(`/delete/${fileName}`, {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ password: password })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.error) {
+            alert(data.error);
+          } else {
+            alert(data.message);
+            location.reload();
+          }
+        });
+      }
+    }
+
+    document.getElementById('uploadForm').addEventListener('submit', function(event) {
+      event.preventDefault(); // Add this line
+
+      const formData = new FormData(event.target);
+
+      fetch('/upload', {
+        method: 'POST',
+        body: formData
       })
       .then(response => response.json())
       .then(data => {
-        if (data.error) {
-          alert(data.error);
-        } else {
-          alert(data.message);
-          location.reload();
-        }
+        alert('Your password is: ' + data.password);
+      })
+      .catch((error) => {
+        console.error('Error:', error);
       });
-    }
-  }
-  // index.ejs
-document.getElementById('uploadForm').addEventListener('submit', function(event) {
-  event.preventDefault(); // Add this line
+    });
+  </script>
 
-  const formData = new FormData(event.target);
-
-  fetch('/upload', {
-    method: 'POST',
-    body: formData
-  })
-  .then(response => response.json())
-  .then(data => {
-    alert('Your password is: ' + data.password);
-  })
-  .catch((error) => {
-    console.error('Error:', error);
-  });
-});
-</script>
-
+</body>
 </html>

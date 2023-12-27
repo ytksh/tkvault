@@ -132,3 +132,4 @@ dist
 #TKVAULT'S OWN FILES
 /public/uploads
 /uploadData.json
+/.vscode
