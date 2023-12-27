@@ -1,60 +1,92 @@
+// Required modules
+const fs = require('fs');
+const path = require('path'); 
 const express = require('express');
 const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
 
+// Express app
 const app = express();
-const port = 3000;
 
-// Serve static files from the "public" directory
-app.use(express.static("public"));
-
-app.use(express.json()); // Parse incoming JSON requests
-
-// Set up storage for uploaded files
+// Multer storage configuration
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, 'public/uploads/');
+  destination: (req, file, cb) => {
+    cb(null, 'public/uploads/')
   },
-  filename: function (req, file, cb) {
-    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)) // append the original file extension
   }
 });
 
-// Set up multer with limits (maxSize in bytes)
-const upload = multer({
-  storage: storage,
-  limits: {
-    fileSize: 1024 * 1024 * 12, // 12 MB
-  },
-});
+// Middleware
+app.use('/uploads', express.static('uploads')); // Serve static files from the "uploads" directory
+app.use(express.static('public')); // Serve static files from the "public" directory
+const upload = multer({ storage: storage });
 
-// Serve HTML form for file upload
+// View engine
+app.set('view engine', 'ejs');
+
+// Port
+const port = process.env.PORT || 3000;
+
+// Function to censor IP
+function censorIp(ip) {
+  // Remove the ::ffff: prefix if it exists
+  if (ip.startsWith('::ffff:')) {
+    ip = ip.substring(7);
+  }
+
+  let parts = ip.split('.');
+  if (parts.length === 4) {
+    parts[2] = parts[3] = 'xxx';
+  }
+  return parts.join('.');
+}
+
+// Routes
 app.get('/', (req, res) => {
-  const files = fs.readdirSync('public/uploads/');
-  res.render('index', { files });
+  let uploadData = [];
+  try {
+    if (fs.existsSync('uploadData.json')) {
+      uploadData = JSON.parse(fs.readFileSync('uploadData.json'));
+    } else {
+      fs.writeFileSync('uploadData.json', JSON.stringify([]));
+    }
+  } catch (error) {
+    console.error('Error reading or writing uploadData.json:', error);
+  }
+  res.render('index', { files: uploadData });
 });
 
-// Handle file upload
 app.post('/upload', upload.single('file'), (req, res) => {
+  const ip = req.ip;
+  const uploadTime = new Date();
+
+  // Read existing upload data
+  let uploadData = [];
+  try {
+    uploadData = JSON.parse(fs.readFileSync('uploadData.json'));
+  } catch (error) {
+    console.error('Error reading uploadData.json:', error);
+  }
+
+  // Add new upload data
+  uploadData.push({
+    fileName: req.file.filename,
+    uploaderIP: censorIp(ip),
+    uploadTime: uploadTime
+  });
+
+  // Write updated upload data back to file
+  try {
+    fs.writeFileSync('uploadData.json', JSON.stringify(uploadData));
+  } catch (error) {
+    console.error('Error writing uploadData.json:', error);
+  }
+
   res.redirect('/');
 });
 
-// Serve uploaded files from the "public/uploads" directory
-app.use('/uploads', express.static('public/uploads'));
-
-// Endpoint to get the list of files
-app.get('/getFiles', (req, res) => {
-  try {
-    const files = fs.readdirSync('public/uploads/');
-    res.json({ files });
-  } catch (error) {
-    console.error('Error reading files:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
-  }
-});
-
-// Start the server
+// Start server
 app.listen(port, () => {
   console.log(`Server is running at http://localhost:${port}`);
 });
