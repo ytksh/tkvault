@@ -44,8 +44,34 @@
         <a href="/uploads/<%= file.fileName %>"><%= file.fileName %></a> (<%= formatBytes(file.fileSize) %>)
         <p>IP: <%= file.uploaderIP %></p>
         <p>Date: <%= new Date(file.uploadTime).toLocaleString() %></p>
+        <button onclick="deleteFile('<%= file.fileName %>')">Delete</button>
       </li>
     <% }); %>
   </ul>
 </body>
+
+<script>
+  function deleteFile(fileName) {
+    const password = prompt('Enter the password for this file:');
+    if (password) {
+      fetch(`/delete/${fileName}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ password: password })
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          alert(data.error);
+        } else {
+          alert(data.message);
+          location.reload();
+        }
+      });
+    }
+  }
+</script>
+
 </html>
