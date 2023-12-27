@@ -49,7 +49,8 @@ app.get('/', (req, res) => {
 });
 
 app.post('/upload', uploadLimiter, upload.single('file'), async (req, res) => {
-  const ip = req.ip;
+  let ip = req.headers['x-forwarded-for'] || req.ip;
+  ip = ip.split(',')[0];
   const uploadTime = new Date();
 
   // Generate a random password
