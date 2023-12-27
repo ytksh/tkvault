@@ -16,7 +16,7 @@
       <img src="https://media.tenor.com/7GzWtl6kvcgAAAAi/bocchi-the-rock.gif">
     </div>
   </div>
-  <form action="/upload" method="post" enctype="multipart/form-data">
+  <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
     <input type="file" name="file" required>
     <button type="submit">Upload</button>
     <p>12 MB upload limit.</p>
@@ -72,6 +72,24 @@
       });
     }
   }
+  // index.ejs
+document.getElementById('uploadForm').addEventListener('submit', function(event) {
+  event.preventDefault(); // Add this line
+
+  const formData = new FormData(event.target);
+
+  fetch('/upload', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    alert('Your password is: ' + data.password);
+  })
+  .catch((error) => {
+    console.error('Error:', error);
+  });
+});
 </script>
 
 </html>
