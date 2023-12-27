@@ -44,7 +44,7 @@
         <a href="/uploads/<%= file.fileName %>"><%= file.fileName %></a> (<%= formatBytes(file.fileSize) %>)
         <p>IP: <%= file.uploaderIP %></p>
         <p>Date: <%= new Date(file.uploadTime).toLocaleString() %></p>
-        <button onclick="deleteFile('<%= file.fileName %>')">Delete</button>
+        <button class="deleteButton" onclick="deleteFile('<%= file.fileName %>')">🗑 Delete</button>
       </li>
     <% }); %>
   </ul>

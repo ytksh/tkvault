@@ -16,6 +16,14 @@ body{
   filter: grayscale(1);
 }
 
+.deleteButton{
+  background-color: black;
+  border-style: solid;
+  color: white;
+  padding: 5px 10px;
+  font-size: 10px;
+}
+
 form{
   padding: 5px;
   width: 250px;
