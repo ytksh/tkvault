@@ -3,9 +3,17 @@ const fs = require('fs');
 const path = require('path'); 
 const express = require('express');
 const multer = require('multer');
+const rateLimit = require('express-rate-limit');
 
 // Express app
 const app = express();
+
+// Define rate limit rule
+const uploadLimiter = rateLimit({
+  windowMs: 2 * 60 * 1000, // 2 minutes
+  max: 1, // limit each IP to 1 requests per windowMs
+  message: "Too many uploads from this IP, please try again after 2 minutes"
+});
 
 // Multer storage configuration
 const storage = multer.diskStorage({
@@ -57,7 +65,7 @@ app.get('/', (req, res) => {
   res.render('index', { files: uploadData });
 });
 
-app.post('/upload', upload.single('file'), (req, res) => {
+app.post('/upload', uploadLimiter, upload.single('file'), async (req, res) => {
   const ip = req.ip;
   const uploadTime = new Date();
 
