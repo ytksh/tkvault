@@ -18,12 +18,19 @@ const PORT = 3000;
 app.set('view engine', 'ejs');
 app.use(express.json());
 app.use(express.static('public'));
-app.use('/uploads', express.static('uploads'));
+
+// Check if uploads directory exists, if not, create it
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir);
+}
+
+app.use('/uploads', express.static(uploadsDir));
 app.set('trust proxy', 1);
 
 // Multer configuration
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, 'uploads/'),
+  destination: (req, file, cb) => cb(null, uploadsDir),
   filename: (req, file, cb) => cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`)
 });
 const upload = multer({ storage });
